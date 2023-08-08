@@ -19,5 +19,9 @@
   "homepage": "https://github.com/julie-log/wetube-clone-2023#readme",
   "dependencies": {
     "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.22.10",
+    "@babel/preset-env": "^7.22.10"
   }
 }
