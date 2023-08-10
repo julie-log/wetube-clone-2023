@@ -1,9 +1,9 @@
 #Wetube Reloaded
 
 /home
-/join Join
-/login Login
-/search Serch
+/join
+/login
+/search
 
 /users/edit
 /users/delete
