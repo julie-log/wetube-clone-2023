@@ -1,8 +1,9 @@
 import express from "express";
 const app = express();
 const PORT = 4000;
-const handleHome = () => {
-  console.log("Somebody ");
+const handleHome = (req, res) => {
+  console.log(`Somebody is trying to go home,,,${req}`);
+  return res.send("Home fin.");
 };
 app.get("/", handleHome);
 const handleListening = () =>
