@@ -14,17 +14,6 @@ app.use("/videos", videoRouter);
 app.use("/users", userRouter);
 app.use("/", globalRouter);
 
-const home = (req, res) => {
-  return res.send("Home here.");
-};
-
-const login = (req, res) => {
-  return res.send("Login here.");
-};
-
-app.get("/", home);
-app.get("/login", login);
-
 const handleListening = () =>
   console.log(`Server listening on http://localhost:${PORT}/ 🚀`);
 app.listen(4000, handleListening);
