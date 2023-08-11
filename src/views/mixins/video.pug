@@ -1,0 +1,9 @@
+mixin video(video)
+     div
+            h4=video.title
+            ul
+                li #{video.rating}/5
+                li #{video.comments} comments.
+                li Posted #{video.createdAt}.
+                li #{video.views} views.
+                iframe(width="560" height="315" src=`${video.src}` title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="")
