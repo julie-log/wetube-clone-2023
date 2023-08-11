@@ -1,5 +1,5 @@
 export const join = (req, res) => res.send("Join User");
-export const login = (req, res) => res.send("Lsogin User");
+export const login = (req, res) => res.send("Login User");
 
 export const see = (req, res) => {
   return res.send(`See  ${req.params.id} Profile`);
