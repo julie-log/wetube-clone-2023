@@ -1,5 +1,11 @@
 extends base
-include mixins/video
+
 
 block content
-       +video(video) 
+    iframe(width="560" height="315" src=`${video.src}` title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="")
+    ul
+        li #{video.views} #{video.views ===1?"view":"views"}.            
+        li #{video.rating}/5
+        li #{video.comments} #{video.views ===1?"comment":"comments"}.
+        li Posted #{video.createdAt}.
+    a(href=`${video.id}/edit`) Edit video &rarr;
