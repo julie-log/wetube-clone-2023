@@ -60,6 +60,16 @@ export const search = (req, res) => res.send("Search Video");
 export const getUpload = (req, res) =>
   res.render("upload", { pageTitle: `Upload Video` });
 export const postUpload = (req, res) => {
+  const newVideo = {
+    title: req.body.title,
+    rating: 0,
+    comments: 0,
+    createdAt: "just now",
+    views: 0,
+    id: videos.length + 1,
+    src: req.body.url,
+  };
+  videos.push(newVideo);
   res.redirect("/");
 };
 export const deleteVideo = (req, res) => res.send("Delete Video");
