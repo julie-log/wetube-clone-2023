@@ -45,17 +45,22 @@ export const home = async (req, res) => {
   }
 };
 
-export const watch = (req, res) => {
+export const watch = async (req, res) => {
   const id = req.params.id;
-  const video = videos[id - 1];
-  return res.render("watch", {
-    pageTitle: `Watching Video`,
-  });
+  try {
+    const video = await Video.findById(id);
+    return res.render("watch", {
+      pageTitle: `${video.title} `,
+      video,
+    });
+  } catch (errors) {
+    return res.render("server-errors", errors);
+  }
 };
 
 export const getEdit = (req, res) => {
   const id = req.params.id;
-  res.render("edit", { pageTitle: `Editing Video` });
+  res.render("edit", { pageTitle: `${video.title}` });
 };
 export const postEdit = (req, res) => {
   const { id } = req.params;

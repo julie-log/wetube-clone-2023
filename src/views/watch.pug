@@ -2,10 +2,11 @@ extends base
 
 
 block content
-    iframe(width="560" height="315" src=`${video.src}` title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="")
+    iframe(width="560" height="315" src=`${video.url}` title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="")
+    h4 #{video.description}
     ul
-        li #{video.views} #{video.views ===1?"view":"views"}.            
-        li #{video.rating}/5
+        li #{video.meta.views} #{video.meta.views ===1?"view":"views"}.            
+        li #{video.meta.rating}/5
         li #{video.comments} #{video.views ===1?"comment":"comments"}.
         li Posted #{video.createdAt}.
     a(href=`${video.id}/edit`) Edit video &rarr;
