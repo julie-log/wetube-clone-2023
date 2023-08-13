@@ -74,12 +74,12 @@ export const postUpload = async (req, res) => {
       hashtags: hashtags.split(",").map((word) => `#${word}`),
       url,
     });
+    return res.redirect("/");
   } catch (error) {
     return res.render("upload", {
       pageTitle: `Upload Video`,
       errorMessage: error._message,
     });
   }
-  return res.redirect("/");
 };
 export const deleteVideo = (req, res) => res.send("Delete Video");

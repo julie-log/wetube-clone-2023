@@ -1,10 +1,12 @@
 mixin video(video)
      div
-            h4
+            h3
                 a(href=`/videos/${video._id}`)=video.title
-            ul
+            iframe(width="560" height="315" src=`${video.url}` title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="")
+            h4 #{video.description}
+            ul  
                 li #{video.meta.rating}/5
                 li #{video.comments} #{video.comments === 1 ? "comment":"comments"}.
                 li Posted #{video.createdAt}.
                 li #{video.meta.views} #{video.meta.views === 1 ? "view":"views"}.
-                iframe(width="560" height="315" src=`${video.url}` title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="")
+                
