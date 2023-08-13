@@ -2,10 +2,10 @@
   "name": "wetube-clone-2023",
   "version": "1.0.0",
   "description": "The best way to watch videos.",
-  "main": "server.js",
+  "main": "init.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon --exec babel-node src/server.js"
+    "dev": "nodemon --exec babel-node src/init.js"
   },
   "repository": {
     "type": "git",
