@@ -65,6 +65,19 @@ export const search = (req, res) => res.send("Search Video");
 export const getUpload = (req, res) =>
   res.render("upload", { pageTitle: `Upload Video` });
 export const postUpload = (req, res) => {
+  const { title, description, hashtags, url } = req.body;
+  const video = new Video({
+    title,
+    description,
+    createdAt: Date.now(),
+    meta: {
+      views: 0,
+      rating: 0,
+    },
+    hashtags: hashtags.split(",").map((word) => `#${word}`),
+    url,
+  });
+  console.log(video);
   res.redirect("/");
 };
 export const deleteVideo = (req, res) => res.send("Delete Video");
