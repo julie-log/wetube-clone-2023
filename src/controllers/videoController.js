@@ -33,10 +33,16 @@
 //   },
 // ];
 
-import Video from "../models/video";
+import Video from "../models/Video";
+
+const handleSearch = (error, videos) => {
+  console.log("errors", error);
+  console.log("videos", videos);
+};
+
 export const home = (req, res) => {
-  Video.find({}, (error, videos) => {});
-  return res.render("home", { pageTitle: "Home" });
+  Video.find({}, handleSearch);
+  return res.render("home", { pageTitle: "Home", videos });
 };
 
 export const watch = (req, res) => {
