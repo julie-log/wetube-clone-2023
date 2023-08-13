@@ -38,6 +38,7 @@ import Video from "../models/Video";
 export const home = async (req, res) => {
   try {
     const videos = await Video.find({});
+    console.log(videos);
     return res.render("home", { pageTitle: "Home", videos });
   } catch (errors) {
     return res.render("server-errors", errors);
@@ -64,9 +65,9 @@ export const postEdit = (req, res) => {
 export const search = (req, res) => res.send("Search Video");
 export const getUpload = (req, res) =>
   res.render("upload", { pageTitle: `Upload Video` });
-export const postUpload = (req, res) => {
+export const postUpload = async (req, res) => {
   const { title, description, hashtags, url } = req.body;
-  const video = new Video({
+  await Video.create({
     title,
     description,
     createdAt: Date.now(),
@@ -77,7 +78,6 @@ export const postUpload = (req, res) => {
     hashtags: hashtags.split(",").map((word) => `#${word}`),
     url,
   });
-  console.log(video);
   res.redirect("/");
 };
 export const deleteVideo = (req, res) => res.send("Delete Video");
