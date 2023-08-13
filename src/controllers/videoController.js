@@ -67,17 +67,19 @@ export const getUpload = (req, res) =>
   res.render("upload", { pageTitle: `Upload Video` });
 export const postUpload = async (req, res) => {
   const { title, description, hashtags, url } = req.body;
-  await Video.create({
-    title,
-    description,
-    createdAt: Date.now(),
-    meta: {
-      views: 0,
-      rating: 0,
-    },
-    hashtags: hashtags.split(",").map((word) => `#${word}`),
-    url,
-  });
-  res.redirect("/");
+  try {
+    await Video.create({
+      title,
+      description,
+      hashtags: hashtags.split(",").map((word) => `#${word}`),
+      url,
+    });
+  } catch (error) {
+    return res.render("upload", {
+      pageTitle: `Upload Video`,
+      errorMessage: error._message,
+    });
+  }
+  return res.redirect("/");
 };
 export const deleteVideo = (req, res) => res.send("Delete Video");
