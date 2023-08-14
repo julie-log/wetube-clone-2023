@@ -6,6 +6,7 @@ mixin video(video)
             h4 #{video.description}
             ul  
                 li #{video.meta.rating}/5
+                li #{video.hashtags.join()}
                 li #{video.comments} #{video.comments === 1 ? "comment":"comments"}.
                 li Posted #{video.createdAt}.
                 li #{video.meta.views} #{video.meta.views === 1 ? "view":"views"}.

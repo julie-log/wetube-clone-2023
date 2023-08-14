@@ -11,3 +11,5 @@ block content
         li #{video.comments} #{video.views ===1?"comment":"comments"}.
         li Posted #{video.createdAt}.
     a(href=`${video.id}/edit`) Edit video &rarr;
+    br
+    a(href=`${video.id}/delete`) Delete video &rarr;
