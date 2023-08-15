@@ -81,6 +81,7 @@ export const postEdit = async (req, res) => {
 
 export const getUpload = (req, res) =>
   res.render("upload", { pageTitle: `Upload Video` });
+
 export const postUpload = async (req, res) => {
   const { title, description, hashtags, url } = req.body;
   try {
