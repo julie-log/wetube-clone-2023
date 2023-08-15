@@ -1,7 +1,6 @@
 import express from "express";
 import morgan from "morgan";
 import session from "express-session";
-import mongoStore from "connect-mongo";
 import userRouter from "./routers/userRouter";
 import videoRouter from "./routers/videoRouter";
 import rootRouter from "./routers/rootRouter";
@@ -16,7 +15,6 @@ app.set("views", process.cwd() + "/src/views");
 
 app.use(logger);
 app.use(express.urlencoded({ extended: true }));
-console.log();
 app.use(
   session({
     secret: process.env.COOKIE_SECRET,
