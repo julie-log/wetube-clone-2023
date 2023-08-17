@@ -41,19 +41,19 @@ export const getLogin = (req, res) =>
 
 export const postLogin = async (req, res) => {
   const { username, password } = req.body;
-  const pageTitle = `Login`;
+  const pageTitle = "Login";
   const user = await User.findOne({ username, socialOnly: false });
   if (!user) {
-    res.status(400).render("login", {
+    return res.status(400).render("login", {
       pageTitle,
       errorMessage: "An account with this username does not exists.",
     });
   }
   const ok = await bcrypt.compare(password, user.password);
   if (!ok) {
-    res.status(400).render("login", {
+    return res.status(400).render("login", {
       pageTitle,
-      errorMessage: "Wrong password...",
+      errorMessage: "Wrong password",
     });
   }
   req.session.loggedIn = true;
@@ -138,7 +138,12 @@ export const see = (req, res) => {
   return res.send(`See  ${req.params.id} Profile`);
 };
 
-export const edit = (req, res) => res.send("Edit User");
+export const getEdit = (req, res) => {
+  return res.render("edit-profile", { pageTitle: `Edit Profile` });
+};
+export const postEdit = (req, res) => {
+  return res.render("edit-profile", { pageTitle: `Edit Profile` });
+};
 export const logout = (req, res) => {
   req.session.destroy();
   return res.redirect("/");
