@@ -3,6 +3,7 @@ import fetch from "node-fetch";
 import User from "../models/User";
 
 export const getJoin = (req, res) => res.render("join", { pageTitle: "Join" });
+
 export const postJoin = async (req, res) => {
   const { name, email, username, password, password2, location } = req.body;
   const pageTitle = "Join";
@@ -60,6 +61,7 @@ export const postLogin = async (req, res) => {
   req.session.user = user;
   return res.redirect("/");
 };
+
 export const startGithubLogin = (req, res) => {
   const baseUrl = `https://github.com/login/oauth/authorize`;
   const config = {
@@ -141,6 +143,7 @@ export const see = (req, res) => {
 export const getEdit = (req, res) => {
   return res.render("edit-profile", { pageTitle: `Edit Profile` });
 };
+
 export const postEdit = async (req, res) => {
   const {
     session: {
@@ -161,7 +164,21 @@ export const postEdit = async (req, res) => {
   req.session.user = updateUser;
   return res.redirect("/users/edit");
 };
+
 export const logout = (req, res) => {
   req.session.destroy();
+  return res.redirect("/");
+};
+
+export const getChangePassword = (req, res) => {
+  if (req.session.user.socialOnly === true) {
+    return res.redirect("/");
+  }
+  return res.render("users/change-password", {
+    pageTitle: "Change Password",
+  });
+};
+export const postChangePassword = (req, res) => {
+  //send notification
   return res.redirect("/");
 };
