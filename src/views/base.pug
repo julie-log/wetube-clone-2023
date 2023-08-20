@@ -6,6 +6,8 @@ html(lang="ko")
     body
         header
             h1=pageTitle
+            if loggedIn
+                span Hello, #{loggedInUser.name}
             nav
                 ul 
                     
@@ -19,8 +21,6 @@ html(lang="ko")
                     if loggedIn
                         li 
                             a(href="/users/edit") Edit Profile
-                        li 
-                            a(href="/my-profile") #{loggedInUser.name}'s Profile
                         li 
                             a(href="/users/logout") Logout
                     else    
