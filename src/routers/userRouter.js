@@ -16,7 +16,7 @@ import {
 } from "../middlewares";
 
 const userRouter = express.Router();
-userRouter.get("/:id(\\d+)", see);
+userRouter.get("/:id", see);
 userRouter
   .route("/edit")
   .all(protectorMiddleware)
