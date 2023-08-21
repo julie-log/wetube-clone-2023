@@ -1,13 +1,14 @@
 mixin video(video)
      div
-            h3
-                a(href=`/videos/${video._id}`)=video.title
-            iframe(width="560" height="315" src=`${video.url}` title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="")
-            h4 #{video.description}
-            ul  
-                li #{video.meta.rating}/5
-                li #{video.hashtags.join()}
-                li #{video.comments} #{video.comments === 1 ? "comment":"comments"}.
-                li Posted #{video.createdAt}.
-                li #{video.meta.views} #{video.meta.views === 1 ? "view":"views"}.
-                
+        h3
+            a(href=`/videos/${video._id}`)=video.title
+            //- iframe(width="560" height="315" src=`${video.url}` title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="")
+        video(src=`/${video.fileUrl}`,controls)
+        h4 #{video.description}
+        ul  
+            li #{video.meta.rating}/5
+            li #{video.hashtags.join()}
+            li #{video.comments} #{video.comments === 1 ? "comment":"comments"}.
+            li Posted #{video.createdAt}.
+            li #{video.meta.views} #{video.meta.views === 1 ? "view":"views"}.
+            
