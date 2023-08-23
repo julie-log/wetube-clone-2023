@@ -9,9 +9,11 @@ module.exports = {
   ],
   entry: "./src/client/js/main.js",
   mode: "development",
+  watch: true,
   output: {
     path: path.resolve(__dirname, "assets"),
     filename: "js/main.js",
+    clean: true,
   },
   module: {
     rules: [
