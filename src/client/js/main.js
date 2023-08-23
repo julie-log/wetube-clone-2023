@@ -1,1 +1,1 @@
-alert("hfg");
+import "../scss/styles.scss";
