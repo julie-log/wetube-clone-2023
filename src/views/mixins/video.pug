@@ -4,11 +4,11 @@ mixin video(video)
             a(href=`/videos/${video._id}`)=video.title
             //- iframe(width="560" height="315" src=`${video.url}` title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="")
         video(src=`/${video.fileUrl}`,controls)
-        h4 #{video.description}
-        ul  
-            li #{video.meta.rating}/5
-            li #{video.hashtags.join()}
-            li #{video.comments} #{video.comments === 1 ? "comment":"comments"}.
-            li Posted #{video.createdAt}.
-            li #{video.meta.views} #{video.meta.views === 1 ? "view":"views"}.
+        a(href=`/videos/${video.id}`).video-mixin
+        div.video-mixin__thumb
+        div.video-mixin__data
+            span.video-mixin__title=video.title
+            div.video-mixin__meta
+                span #{video.owner.name} • 
+                span #{video.meta.views} 회
             
