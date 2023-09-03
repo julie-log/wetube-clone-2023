@@ -1,13 +1,11 @@
 extends ../base
 include ../mixins/video
 
-block content   
+
+block content
     div.profile__data
-    if loggedInUser.socialOnly
-        img(src=user.avatarUrl).avatar
-    else
         img(src="/" + user.avatarUrl).avatar
-    h3=user.name
+        h3=user.name
     div.video-grid
         each video in user.videos
             +video(video)

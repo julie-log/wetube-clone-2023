@@ -145,39 +145,59 @@ export const see = async (req, res) => {
       model: "User",
     },
   });
+
   if (!user) {
-    return res.status(400).render("404", { pageTitle: `User not found...` });
+    return res.status(404).render("404", { pageTitle: "User not found." });
   }
   return res.render("users/profile", {
-    pageTitle: `${user.name}'s Profile`,
+    pageTitle: user.name,
     user,
   });
 };
 
 export const getEdit = (req, res) => {
-  return res.render("edit-profile", { pageTitle: `Edit Profile` });
+  return res.render("edit-profile", { pageTitle: "Edit Profile" });
 };
 
 export const postEdit = async (req, res) => {
   const {
     session: {
-      user: { _id, avatarUrl },
+      user: { _id, avatarUrl, email: sessionEmail, username: sessionUsername },
     },
     body: { name, email, username, location },
     file,
   } = req;
-  const updateUser = await User.findByIdAndUpdate(
+  let searchParam = [];
+  if (sessionEmail !== email) {
+    searchParam.push({ email });
+  }
+  if (sessionUsername !== username) {
+    searchParam.push({ username });
+  }
+  if (searchParam.length > 0) {
+    const foundUser = await User.findOne({ $or: searchParam });
+    if (foundUser && foundUser._id.toString() !== _id) {
+      return res.status(HTTP_BAD_REQUEST).render("edit-profile", {
+        pageTitle: "Edit Profile",
+        errorMessage: "This username/email is already taken.",
+      });
+    }
+  }
+  const isHeroku = process.env.NODE_ENV === "production";
+  const updatedUser = await User.findByIdAndUpdate(
     _id,
     {
-      avatarUrl: file ? file.path : avatarUrl,
+      avatarUrl: file ? (isHeroku ? file.location : file.path) : avatarUrl,
       name,
       email,
       username,
       location,
     },
-    { new: true }
+    {
+      new: true,
+    }
   );
-  req.session.user = updateUser;
+  req.session.user = updatedUser;
   return res.redirect("/users/edit");
 };
 

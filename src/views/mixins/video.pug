@@ -1,14 +1,8 @@
 mixin video(video)
-     div
-        h3
-            a(href=`/videos/${video._id}`)=video.title
-            //- iframe(width="560" height="315" src=`${video.url}` title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="")
-        video(src=`/${video.fileUrl}`,controls)
-        a(href=`/videos/${video.id}`).video-mixin
-        div.video-mixin__thumb
+    a(href=`/videos/${video.id}`).video-mixin
+        div.video-mixin__thumb(style=`background-image:url(${video.thumbUrl});background-size:cover;background-position:center;`)
         div.video-mixin__data
             span.video-mixin__title=video.title
             div.video-mixin__meta
                 span #{video.owner.name} • 
                 span #{video.meta.views} 회
-            
