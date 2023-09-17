@@ -1,18 +1,18 @@
 import express from "express";
 import {
+  getEdit,
+  postEdit,
   logout,
   see,
   startGithubLogin,
   finishGithubLogin,
-  getEdit,
-  postEdit,
   getChangePassword,
   postChangePassword,
 } from "../controllers/userController";
 import {
-  avatarUpload,
   protectorMiddleware,
   publicOnlyMiddleware,
+  avatarUpload,
 } from "../middlewares";
 
 const userRouter = express.Router();

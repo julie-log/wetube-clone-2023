@@ -1,19 +1,18 @@
-import bcrypt from "bcrypt";
-import fetch from "node-fetch";
 import User from "../models/User";
+import fetch from "node-fetch";
+import bcrypt from "bcrypt";
 
 export const getJoin = (req, res) => res.render("join", { pageTitle: "Join" });
-
 export const postJoin = async (req, res) => {
-  const { name, email, username, password, password2, location } = req.body;
+  const { name, username, email, password, password2, location } = req.body;
   const pageTitle = "Join";
-  const exists = await User.exists({ $or: [{ username }, { email }] });
   if (password !== password2) {
     return res.status(400).render("join", {
       pageTitle,
       errorMessage: "Password confirmation does not match.",
     });
   }
+  const exists = await User.exists({ $or: [{ username }, { email }] });
   if (exists) {
     return res.status(400).render("join", {
       pageTitle,
@@ -23,20 +22,19 @@ export const postJoin = async (req, res) => {
   try {
     await User.create({
       name,
-      email,
       username,
+      email,
       password,
       location,
     });
     return res.redirect("/login");
   } catch (error) {
     return res.status(400).render("join", {
-      pageTitle: `Join`,
+      pageTitle: "Upload Video",
       errorMessage: error._message,
     });
   }
 };
-
 export const getLogin = (req, res) =>
   res.render("login", { pageTitle: "Login" });
 
@@ -63,7 +61,7 @@ export const postLogin = async (req, res) => {
 };
 
 export const startGithubLogin = (req, res) => {
-  const baseUrl = `https://github.com/login/oauth/authorize`;
+  const baseUrl = "https://github.com/login/oauth/authorize";
   const config = {
     client_id: process.env.GH_CLIENT,
     allow_signup: false,
@@ -75,7 +73,7 @@ export const startGithubLogin = (req, res) => {
 };
 
 export const finishGithubLogin = async (req, res) => {
-  const baseUrl = `https://github.com/login/oauth/access_token`;
+  const baseUrl = "https://github.com/login/oauth/access_token";
   const config = {
     client_id: process.env.GH_CLIENT,
     client_secret: process.env.GH_SECRET,
@@ -101,7 +99,6 @@ export const finishGithubLogin = async (req, res) => {
         },
       })
     ).json();
-    console.log(userData);
     const emailData = await (
       await fetch(`${apiUrl}/user/emails`, {
         headers: {
@@ -109,19 +106,19 @@ export const finishGithubLogin = async (req, res) => {
         },
       })
     ).json();
-    console.log(emailData);
     const emailObj = emailData.find(
       (email) => email.primary === true && email.verified === true
     );
     if (!emailObj) {
-      res.redirect("/login");
+      // set notification
+      return res.redirect("/login");
     }
     let user = await User.findOne({ email: emailObj.email });
     if (!user) {
       user = await User.create({
-        name: userData.name ? userData.name : "Unknown",
-        username: userData.login,
         avatarUrl: userData.avatar_url,
+        name: userData.name,
+        username: userData.login,
         email: emailObj.email,
         password: "",
         socialOnly: true,
@@ -136,6 +133,68 @@ export const finishGithubLogin = async (req, res) => {
   }
 };
 
+export const logout = (req, res) => {
+  req.session.destroy();
+  return res.redirect("/");
+};
+export const getEdit = (req, res) => {
+  return res.render("edit-profile", { pageTitle: "Edit Profile" });
+};
+export const postEdit = async (req, res) => {
+  const {
+    session: {
+      user: { _id, avatarUrl },
+    },
+    body: { name, email, username, location },
+    file,
+  } = req;
+  const updatedUser = await User.findByIdAndUpdate(
+    _id,
+    {
+      avatarUrl: file ? file.path : avatarUrl,
+      name,
+      email,
+      username,
+      location,
+    },
+    { new: true }
+  );
+  req.session.user = updatedUser;
+  return res.redirect("/users/edit");
+};
+
+export const getChangePassword = (req, res) => {
+  if (req.session.user.socialOnly === true) {
+    return res.redirect("/");
+  }
+  return res.render("users/change-password", { pageTitle: "Change Password" });
+};
+export const postChangePassword = async (req, res) => {
+  const {
+    session: {
+      user: { _id },
+    },
+    body: { oldPassword, newPassword, newPasswordConfirmation },
+  } = req;
+  const user = await User.findById(_id);
+  const ok = await bcrypt.compare(oldPassword, user.password);
+  if (!ok) {
+    return res.status(400).render("users/change-password", {
+      pageTitle: "Change Password",
+      errorMessage: "The current password is incorrect",
+    });
+  }
+  if (newPassword !== newPasswordConfirmation) {
+    return res.status(400).render("users/change-password", {
+      pageTitle: "Change Password",
+      errorMessage: "The password does not match the confirmation",
+    });
+  }
+  user.password = newPassword;
+  await user.save();
+  return res.redirect("/users/logout");
+};
+
 export const see = async (req, res) => {
   const { id } = req.params;
   const user = await User.findById(id).populate({
@@ -145,7 +204,6 @@ export const see = async (req, res) => {
       model: "User",
     },
   });
-
   if (!user) {
     return res.status(404).render("404", { pageTitle: "User not found." });
   }
@@ -153,93 +211,4 @@ export const see = async (req, res) => {
     pageTitle: user.name,
     user,
   });
-};
-
-export const getEdit = (req, res) => {
-  return res.render("edit-profile", { pageTitle: "Edit Profile" });
-};
-
-export const postEdit = async (req, res) => {
-  const {
-    session: {
-      user: { _id, avatarUrl, email: sessionEmail, username: sessionUsername },
-    },
-    body: { name, email, username, location },
-    file,
-  } = req;
-  let searchParam = [];
-  if (sessionEmail !== email) {
-    searchParam.push({ email });
-  }
-  if (sessionUsername !== username) {
-    searchParam.push({ username });
-  }
-  if (searchParam.length > 0) {
-    const foundUser = await User.findOne({ $or: searchParam });
-    if (foundUser && foundUser._id.toString() !== _id) {
-      return res.status(HTTP_BAD_REQUEST).render("edit-profile", {
-        pageTitle: "Edit Profile",
-        errorMessage: "This username/email is already taken.",
-      });
-    }
-  }
-  const isHeroku = process.env.NODE_ENV === "production";
-  const updatedUser = await User.findByIdAndUpdate(
-    _id,
-    {
-      avatarUrl: file ? (isHeroku ? file.location : file.path) : avatarUrl,
-      name,
-      email,
-      username,
-      location,
-    },
-    {
-      new: true,
-    }
-  );
-  req.session.user = updatedUser;
-  return res.redirect("/users/edit");
-};
-
-export const logout = (req, res) => {
-  req.session.destroy();
-  return res.redirect("/");
-};
-
-export const getChangePassword = (req, res) => {
-  if (req.session.user.socialOnly === true) {
-    return res.redirect("/");
-  }
-  return res.render("users/change-password", {
-    pageTitle: "Change Password",
-  });
-};
-export const postChangePassword = async (req, res) => {
-  const {
-    session: {
-      user: { _id, password },
-    },
-    body: { oldPassword, newPassword, newPasswordConfirmation },
-  } = req;
-
-  const ok = await bcrypt.compare(oldPassword, password);
-  const pageTitle = "Change Password";
-  if (!ok) {
-    return res.status(400).render("users/change-password", {
-      pageTitle,
-      errorMessage: "The current password is incorrect.",
-    });
-  }
-
-  if (newPassword !== newPasswordConfirmation) {
-    return res.status(400).render("users/change-password", {
-      pageTitle,
-      errorMessage: "The password does not match the confirmation.",
-    });
-  }
-  const user = await User.findById(_id);
-  user.password = newPassword;
-  await user.save();
-  req.session.user.password = user.password;
-  return res.redirect("/users/logout");
 };

@@ -1,38 +1,3 @@
-// const fakeUser = {
-//   username: "vernon",
-//   loggedIn: true,
-// };
-
-// let videos = [
-//   {
-//     title: "Seventeen - Super",
-//     rating: 5,
-//     comments: 2000,
-//     createdAt: "2 months ago",
-//     views: "2.5M",
-//     id: 1,
-//     src: "https://www.youtube.com/embed/-GQg25oP0S4",
-//   },
-//   {
-//     title: "부석순 (SEVENTEEN) - 파이팅 해야지 (Feat. 이영지) Official MV",
-//     rating: 5,
-//     comments: 3000,
-//     createdAt: "6 months ago",
-//     views: "3.5M",
-//     id: 2,
-//     src: "https://www.youtube.com/embed/xj5XzCBCwsc",
-//   },
-//   {
-//     title: "SEVENTEEN- F*ck My Life Official MV",
-//     rating: 4.5,
-//     comments: 1000,
-//     createdAt: "2 months ago",
-//     views: "1.5M",
-//     id: 3,
-//     src: "https://www.youtube.com/embed/9kpuOoIh3wU",
-//   },
-// ];
-
 import Video from "../models/Video";
 import User from "../models/User";
 
@@ -75,7 +40,7 @@ export const postEdit = async (req, res) => {
   const { title, description, hashtags } = req.body;
   const video = await Video.exists({ _id: id });
   if (!video) {
-    return res.render("404", { pageTitle: "Video not found." });
+    return res.status(404).render("404", { pageTitle: "Video not found." });
   }
   if (String(video.owner) !== String(_id)) {
     return res.status(403).redirect("/");
@@ -83,15 +48,14 @@ export const postEdit = async (req, res) => {
   await Video.findByIdAndUpdate(id, {
     title,
     description,
-    hashtags: hashtags
-      .split(",")
-      .map((word) => (word.startsWith("#") ? word : `#${word}`)),
+    hashtags: Video.formatHashtags(hashtags),
   });
   return res.redirect(`/videos/${id}`);
 };
 
-export const getUpload = (req, res) =>
-  res.render("upload", { pageTitle: `Upload Video` });
+export const getUpload = (req, res) => {
+  return res.render("upload", { pageTitle: "Upload Video" });
+};
 
 export const postUpload = async (req, res) => {
   const {
@@ -107,19 +71,19 @@ export const postUpload = async (req, res) => {
       owner: _id,
       hashtags: Video.formatHashtags(hashtags),
     });
-
     const user = await User.findById(_id);
     user.videos.push(newVideo._id);
     user.save();
-
     return res.redirect("/");
   } catch (error) {
+    console.log(error);
     return res.status(400).render("upload", {
       pageTitle: "Upload Video",
       errorMessage: error._message,
     });
   }
 };
+
 export const deleteVideo = async (req, res) => {
   const { id } = req.params;
   const {
@@ -127,10 +91,10 @@ export const deleteVideo = async (req, res) => {
   } = req.session;
   const video = await Video.findById(id);
   if (!video) {
-    return res.status(404).render("404", { pageTitle: "Video not found..." });
+    return res.status(404).render("404", { pageTitle: "Video not found." });
   }
   if (String(video.owner) !== String(_id)) {
-    return res.status(403).redirect(`/`);
+    return res.status(403).redirect("/");
   }
   await Video.findByIdAndDelete(id);
   return res.redirect("/");
@@ -142,9 +106,9 @@ export const search = async (req, res) => {
   if (keyword) {
     videos = await Video.find({
       title: {
-        $regex: new RegExp(`${keyword}`, "i"),
+        $regex: new RegExp(`${keyword}$`, "i"),
       },
     }).populate("owner");
   }
-  return res.render("search", { pageTitle: `Search Video`, videos });
+  return res.render("search", { pageTitle: "Search", videos });
 };
